@@ -79,7 +79,7 @@ export default function HabitsDashboard() {
   if (error) return (
     <div className="flex flex-col items-center justify-center h-64 gap-3">
       <p className="text-red-500 text-sm">{error}</p>
-      <button onClick={loadSummary} className="flex items-center gap-2 text-sm text-purple-500 hover:underline">
+      <button onClick={() => loadSummary()} className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
         <RefreshCw size={14} /> Retry
       </button>
     </div>
