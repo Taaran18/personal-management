@@ -92,14 +92,16 @@ export default function DashboardPage() {
 
   const isCurrentMonth = selectedMonth.getFullYear() === nowDate.getFullYear() && selectedMonth.getMonth() === nowDate.getMonth();
 
-  // Cash flow area chart data
-  const cashFlowData = yearly_overview.map((m) => ({
-    month: m.month.split("-")[0],
-    income: m.income,
-    expenses: m.expenses,
-    savings: m.savings,
-    goal: m.goal,
-  }));
+  // Cash flow area chart data — trim to selected month to avoid flat-zero trailing space
+  const cashFlowData = yearly_overview
+    .slice(0, selectedMonth.getMonth() + 1)
+    .map((m) => ({
+      month: m.month.split("-")[0],
+      income: m.income,
+      expenses: m.expenses,
+      savings: m.savings,
+      goal: m.goal,
+    }));
 
   // Month-over-month: find previous month's data
   const curMonthLabel = selectedMonth.toLocaleDateString("en-IN", { month: "short" }) + "-" + selectedMonth.getFullYear();
