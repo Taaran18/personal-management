@@ -10,11 +10,17 @@ from app.models.salary import TransactionCreate, TransactionUpdate, ConfigUpdate
 
 router = APIRouter(prefix="/salary", tags=["salary"])
 
-CATEGORIES = [
-    "Food & Dining", "Rent", "Transport", "Utilities", "Entertainment",
-    "Shopping", "Healthcare", "Education", "Investment / SIP", "EMI",
-    "Salary Credit", "Other Income", "Miscellaneous"
+INCOME_CATEGORIES = ["Salary Credit", "Other Income", "Reimbursed"]
+
+EXPENSE_CATEGORIES = [
+    "Food & Dining", "Rent", "Transport", "Fuel", "Utilities",
+    "Entertainment", "Gaming", "Movies & Events", "Shopping", "Healthcare",
+    "Family Expenses", "Personal Care", "Education", "Stationery",
+    "Investment / SIP", "EMI", "Groceries", "Home & Electronics",
+    "Lending / Given", "Miscellaneous",
 ]
+
+CATEGORIES = INCOME_CATEGORIES + EXPENSE_CATEGORIES
 
 
 # ─── Transactions ────────────────────────────────────────────────────────────
@@ -272,8 +278,11 @@ async def get_dashboard(month: Optional[str] = Query(None, description="Format: 
             "goal": saving_goal,
         })
 
-    # This month spending by category (only OUT)
-    spending = {cat: round(sum(t["amount"] for t in txns if t["type"] == "OUT" and t["category"] == cat), 2) for cat in CATEGORIES}
+    # This month spending by category (only OUT, dynamic — handles any category)
+    spending: dict = {}
+    for tx in txns:
+        if tx["type"] == "OUT":
+            spending[tx["category"]] = round(spending.get(tx["category"], 0) + tx["amount"], 2)
 
     return {
         "this_month": {
